@@ -6,17 +6,26 @@ import csv
 
 
 def query_ip(ip_input):
-    if "/" in ip_input:
-        ip_to_lookup = ipaddress.ip_address(ip_input)
-    else:
-        ip_to_lookup = ipaddress.ip_network(ip_input)
+    try:
+        if "/" in ip_input:
+            ip_to_lookup = ipaddress.ip_address(ip_input)
+        else:
+            ip_to_lookup = ipaddress.ip_network(ip_input)
+        query = whois.whois(ip_input)
+        return query
+    except:
+        print(f'{ip_input} is not a valid IP or IP range!')
 
-    query = whois.whois(ip_input)
-    print(query)
 
+def load_file(ip_list_file):
+    ips_list = []
 
-def load_file():
-    pass
+    with open(ip_list_file, 'r') as ip_list:
+        lines = ip_list.readlines()
+        for line in lines:
+            ip_list.append(line)
+
+    return ips_list
 
 
 def output_findings(query_array):
