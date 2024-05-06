@@ -4,11 +4,13 @@ import argparse
 import sys
 import csv
 
+
 def clean_up_helper(query_result, ip_input):
     keys = ['domain_name', 'registrar', 'name']
     new_dict = {key: query_result[key] for key in keys}
     new_dict['ip_address'] = ip_input
     return new_dict 
+
 
 def query_ip(ip_input):
     try:
