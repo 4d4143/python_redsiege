@@ -12,7 +12,22 @@ def check_hsts(headers):
     return 'Strict-Transport-Security' in headers
 
 
-def check_headers(urls_list)
+def check_csp(headers):
+    return 'Content-Security-Policy' in headers
+
+
+def check_xframe_options(headers):
+    return 'X-Frame-Options' in headers
+
+
+def check_server(headers):
+    if 'Server' in headers:
+        return headers['Server']
+    else:
+        return False
+
+
+def check_headers(urls_list):
     results = []
 
     for url in urls_list:
