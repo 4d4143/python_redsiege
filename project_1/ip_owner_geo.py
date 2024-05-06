@@ -4,9 +4,11 @@ import argparse
 import sys
 import csv
 
-def clean_up_helper(query_result):
+def clean_up_helper(query_result, ip_input):
     keys = ['domain_name', 'registrar', 'name']
-    return {key: query_result[key] for key in keys}
+    new_dict = {key: query_result[key] for key in keys}
+    new_dict['ip_address'] = ip_input
+    return new_dict 
 
 def query_ip(ip_input):
     try:
@@ -15,7 +17,7 @@ def query_ip(ip_input):
         else:
             ip_to_lookup = ipaddress.ip_network(ip_input)
         query = whois.whois(ip_input)
-        query = clean_up_helper(query)
+        query = clean_up_helper(query, ip_input)
         return query
     except:
         print(f'{ip_input} is not a valid IP or IP range!')
@@ -36,8 +38,12 @@ def output_findings(query_array):
     print(query_array)
 
 
-def save_findings():
-    pass
+def save_findings(queries, filename):
+    with open(filename + '.csv', "w") as output_file:
+        fieldnames = ['domain_name', 'registrar', 'name', 'ip_address']
+        writer = csv.DictWriter(output_file, fieldnames=fieldnames)
+        for query in queries:
+            writer.writerow(query)
 
 
 def main():
@@ -68,7 +74,7 @@ def main():
     output_findings(query_results)
 
     if variables['output']:
-        save_findings(query_results)
+        save_findings(query_results, variables['output'])
 
 if __name__ == '__main__':
     main()
