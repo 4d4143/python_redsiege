@@ -4,6 +4,9 @@ import argparse
 import sys
 import csv
 
+def clean_up_helper(query_result):
+    keys = ['domain_name', 'registrar', 'name']
+    return {key: query_result[key] for key in keys}
 
 def query_ip(ip_input):
     try:
@@ -12,6 +15,7 @@ def query_ip(ip_input):
         else:
             ip_to_lookup = ipaddress.ip_network(ip_input)
         query = whois.whois(ip_input)
+        query = clean_up_helper(query)
         return query
     except:
         print(f'{ip_input} is not a valid IP or IP range!')
