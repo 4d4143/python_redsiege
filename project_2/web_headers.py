@@ -7,8 +7,36 @@ def get_headers(input_url):
 
     return http_request.headers
 
+
 def check_hsts(headers):
     return 'Strict-Transport-Security' in headers
+
+
+def check_headers(urls_list)
+    results = []
+
+    for url in urls_list:
+        sub_result = {}
+        headers = get_headers(url)
+        sub_result['url'] = url
+        sub_result['has_hsts'] = check_hsts(headers)
+        sub_result['has_xframe_options'] = check_xframe_options(headers)
+        sub_result['has_csp'] = check_csp(headers)
+        sub_result['has_server'] = check_server(headers)
+        results.append(sub_result)
+
+    return results
+
+
+def load_file(urls_file):
+    urls = []
+
+    with open(urls_file, 'r') as urls_list:
+        lines = urls_list.readlines()
+        for line in lines:
+            urls.append(line)
+
+    return urls
 
 
 def main():
