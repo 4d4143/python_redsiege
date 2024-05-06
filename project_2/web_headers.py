@@ -1,5 +1,7 @@
 import argparse
 import requests
+import csv
+import sys
 
 
 def get_headers(input_url):
@@ -54,6 +56,15 @@ def load_file(urls_file):
     return urls
 
 
+def save_findings(queries, filename):
+    with open(filename + '.csv', "w") as output_file:
+        fieldnames = ['url', 'has_hsts', 'has_xframe_options', 'has_csp', 'has_server']
+        writer = csv.DictWriter(output_file, fieldnames=fieldnames)
+        writer.writeheader()
+        for query in queries:
+            writer.writerow(query)
+
+
 def main():
 
     parser = argparse.ArgumentParser()
@@ -64,10 +75,23 @@ def main():
     args = parser.parse_args()
     variables = vars(args)
 
-    query_results = []
+    header_results = []
 
-    print(check_hsts(get_headers(variables['url'])))
+    if variables['url']:
+        urls_list = [variables['url']]
+        header_results = check_headers(urls_list)
 
+    if variables['file']:
+        urls_list = load_file(variables['file'])
+
+        header_results = check_headers(urls_list)
+
+    if (not variables['url'] and not variables['file']) and variables['output']:
+        print("Please provide an IP or a list of IPs!")
+        sys.exit(0)
+
+    if variables['output']:
+        save_findings(header_results, variables['output'])    
 
 
 if __name__ == '__main__':
